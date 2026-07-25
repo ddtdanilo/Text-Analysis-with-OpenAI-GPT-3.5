@@ -1,1 +1,1 @@
-"""Scripts package for OpenAI Document Analyzer.""" 
+"""Compatibility package retained for version 1.x imports."""

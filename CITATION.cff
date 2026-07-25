@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If this project supports your work, please cite the repository."
+title: "OpenAI Document Analyzer"
+type: software
+authors:
+  - family-names: "Díaz Tarascó"
+    given-names: "Danilo"
+repository-code: "https://github.com/ddtdanilo/OpenAI-Document-Analyzer"
+license: MIT
+version: 2.0.0
+date-released: 2026-07-25
