@@ -1,1 +1,1 @@
-"""Tests package for OpenAI Document Analyzer.""" 
+"""Tests package for OpenAI Document Analyzer."""

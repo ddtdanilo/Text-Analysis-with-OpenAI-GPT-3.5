@@ -1,275 +1,219 @@
 # OpenAI Document Analyzer
 
-[![Tests](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/workflows/Tests/badge.svg)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/tests.yml)
-[![Coverage](https://raw.githubusercontent.com/ddtdanilo/OpenAI-Document-Analyzer/main/coverage-badge.svg)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/coverage-badge.yml)
-[![Release](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/workflows/Release/badge.svg)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/release.yml)
-[![Latest Release](https://img.shields.io/github/v/release/ddtdanilo/OpenAI-Document-Analyzer?color=blue&label=latest)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/releases/latest)
-[![License](https://img.shields.io/github/license/ddtdanilo/OpenAI-Document-Analyzer)](LICENSE)
+[![CI](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/quality.yml/badge.svg)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/quality.yml)
+[![CodeQL](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/codeql.yml/badge.svg)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/actions/workflows/codeql.yml)
+[![Latest release](https://img.shields.io/github/v/release/ddtdanilo/OpenAI-Document-Analyzer?color=2F80ED)](https://github.com/ddtdanilo/OpenAI-Document-Analyzer/releases/latest)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-27AE60.svg)](LICENSE)
 
-A powerful Python application for analyzing text and PDF files using OpenAI's latest chat completion models. This tool allows you to ask questions about documents using customizable prompts and examples.
+A privacy-conscious Python CLI and library for asking focused questions about
+TXT, Markdown, and PDF documents with the
+[OpenAI Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses).
 
-## Features
+Version 2 uses the GPT‑5.6 model family, typed application errors, configurable
+document limits, local PDF text extraction, and network-free unit tests with
+more than 99% branch coverage.
 
-- 📄 Support for both text (.txt) and PDF (.pdf) files
-- 🤖 Compatible with all OpenAI chat models (GPT-4o, GPT-4o-mini, GPT-4 Turbo, GPT-3.5 Turbo)
-- 🔄 Dynamic model switching during runtime
-- 📝 Customizable prompts and examples for context
-- 🛡️ Robust error handling and input validation
-- 🎯 PEP8 compliant code with type hints
+## Why this project
+
+- Analyze local `.txt`, `.md`, `.markdown`, and text-based `.pdf` files.
+- Use `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, or another compatible
+  model ID.
+- Keep response storage disabled by default.
+- Protect prompts from instructions embedded inside document content.
+- Control reasoning effort, answer verbosity, output tokens, and input size.
+- Use either a friendly CLI or the reusable `DocumentAnalyzer` Python class.
+- Retain a compatibility command for the original three-file interactive flow.
+
+> [!IMPORTANT]
+> Document text is extracted locally, then the extracted text is sent to the
+> OpenAI API for analysis. Do not submit material you are not authorized to
+> process. Review [`PRIVACY.md`](PRIVACY.md) before using confidential,
+> regulated, personal, or proprietary documents.
 
 ## Requirements
 
-- Python 3.8+
-- OpenAI API key
+- Python 3.11 or newer
+- An OpenAI API project key
+- API access to the selected model
+- Text-based PDFs; scanned/image-only PDFs require OCR before analysis
+
+API usage may incur charges. Review the current
+[model catalog](https://developers.openai.com/api/docs/models) and your project
+usage limits before processing large documents.
 
 ## Installation
 
-### Quick Setup
-
-1. Clone the repository:
 ```bash
 git clone https://github.com/ddtdanilo/OpenAI-Document-Analyzer.git
 cd OpenAI-Document-Analyzer
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .
 ```
 
-2. Run the setup script:
-```bash
-python3 setup.py
+On Windows PowerShell, activate the environment with:
+
+```powershell
+.venv\Scripts\Activate.ps1
 ```
 
-This will:
-- Create a virtual environment (optional)
-- Install all dependencies
-- Create a `.env` file from the template
+Copy the environment template and add a project API key:
 
-3. Add your OpenAI API key to the `.env` file:
-```bash
-OPENAI_API_KEY=your_api_key_here
-```
-
-### Manual Setup
-
-1. Create a virtual environment:
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Configure environment:
 ```bash
 cp env.example .env
-# Edit .env and add your OpenAI API key
 ```
 
-## Usage
+```dotenv
+OPENAI_API_KEY=your_project_api_key
+OPENAI_MODEL=gpt-5.6-sol
+```
 
-### Basic Usage
+Never commit `.env` or an API key.
+
+## Quick start
+
+Analyze a document with the default prompt:
 
 ```bash
-python scripts/text_analysis.py examples/example_prompt.txt examples/example_response.txt examples/example_text_to_analyze.txt
+openai-document-analyzer report.pdf
 ```
 
-### Using Different Models
-
-You can specify the default model in your `.env` file:
-```bash
-OPENAI_MODEL=gpt-4o-mini  # or gpt-4-turbo, gpt-3.5-turbo, etc.
-```
-
-Or switch models interactively during runtime by typing `model` at the prompt.
-
-### Available Commands
-
-- Type your question to analyze the text
-- Type `model` to change the AI model
-- Type `exit` to quit
-
-## Available Models
-
-| Model | Description |
-|-------|-------------|
-| gpt-4o | Latest and most capable model (default) |
-| gpt-4o-mini | Smaller, faster, and more affordable GPT-4o |
-| gpt-4-turbo | High performance model with vision capabilities |
-| gpt-4-turbo-preview | Preview version of GPT-4 Turbo |
-| gpt-3.5-turbo | Fast and efficient for most tasks |
-| gpt-3.5-turbo-16k | Extended context window version |
-
-## Project Structure
-
-```
-OpenAI-Document-Analyzer/
-├── scripts/
-│   ├── __init__.py             # Package initialization
-│   ├── text_analysis.py       # Main application script
-│   └── document_analyzer.py   # DocumentAnalyzer class
-├── tests/
-│   ├── __init__.py             # Tests package initialization
-│   ├── conftest.py             # Pytest configuration and fixtures
-│   ├── test_document_analyzer.py  # Unit tests
-│   └── test_data/              # Test data directory
-├── examples/
-│   ├── example_prompt.txt      # Sample prompt
-│   ├── example_response.txt    # Sample response
-│   └── example_text_to_analyze.txt  # Sample text to analyze
-├── .github/
-│   └── workflows/
-│       ├── tests.yml           # Main CI/CD pipeline
-│       ├── coverage-badge.yml  # Auto-generated coverage badge
-│       └── release.yml         # Automated releases
-├── requirements.txt            # Python dependencies
-├── package.json               # Semantic release configuration
-├── setup.py                   # Setup script
-├── test_setup.py              # Installation verification script
-├── run_tests.py               # Test runner script
-├── env.example                # Environment template
-├── CHANGELOG.md               # Auto-generated changelog
-└── README.md                  # This file
-```
-
-## Dependencies
-
-- `openai>=1.0.0` - OpenAI Python client library
-- `pypdf>=3.17.0` - PDF processing library
-- `python-dotenv>=1.0.0` - Environment variable management
-
-## API Reference
-
-### `load_text(filepath: str) -> str`
-Load text content from a file (supports .txt and .pdf formats).
-
-### `ask_questions(prompt: str, example_prompt: str, example_response: str, text_to_analyze: str, model: Optional[str] = None) -> str`
-Generate AI responses based on the provided context and prompt.
-
-## Error Handling
-
-The application includes comprehensive error handling for:
-- Missing or invalid files
-- Unsupported file formats
-- API errors and rate limits
-- Invalid model selections
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### Development Guidelines
-
-1. Follow PEP8 style guide
-2. Add type hints to all functions
-3. Include docstrings for all modules and functions
-4. Write tests for new features
-5. Update documentation as needed
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- OpenAI for providing the powerful language models
-- Contributors and users of this project
-
-## Support
-
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/ddtdanilo/OpenAI-Document-Analyzer).
-
-## Running Tests
-
-The project includes a comprehensive test suite using pytest. Multiple options available:
-
-### Quick Test Run
-
-**If you have virtual environment activated:**
-```bash
-./venv/bin/python3 run_tests.py
-```
-
-**Or using pytest directly:**
-```bash
-pytest tests/ -v
-```
-
-### Manual Test Commands
-
-1. Install test dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-2. Run basic tests:
-```bash
-pytest tests/
-```
-
-3. Run tests with detailed output:
-```bash
-pytest tests/ -v
-```
-
-4. Run tests with coverage report:
-```bash
-pytest tests/ --cov=scripts/ --cov-report=term-missing
-```
-
-5. Run specific test file:
-```bash
-pytest tests/test_document_analyzer.py -v
-```
-
-### Continuous Integration
-
-**🚀 Automated Workflows:**
-- ✅ **Tests** - Run automatically on push/PR across Python 3.8, 3.9, 3.10
-- 📊 **Coverage** - Auto-generated badge + Coveralls integration 
-- 🏷️ **Releases** - Semantic versioning with automatic changelog generation
-
-**Coverage Tracking:**
-- 🏷️ **Auto-generated badge** - Updates automatically on each push
-- 📊 **Coveralls integration** - Detailed coverage reports and trends
-
-### Test Coverage
-
-Current test coverage includes:
-- DocumentAnalyzer class initialization
-- Text analysis functionality (mocked)
-- File loading (both .txt and .pdf)
-- Error handling for invalid files
-- PDF text extraction (mocked)
-- Complete document analysis workflow
-
-## Releases
-
-This project uses **semantic versioning** with automated releases:
-
-### Commit Convention
-
-Use conventional commits for automatic version bumping:
+Ask a focused question:
 
 ```bash
-feat: add new document analysis feature    # → Minor version bump (1.1.0)
-fix: resolve PDF parsing issue            # → Patch version bump (1.0.1)  
-docs: update README                       # → No version bump
-chore: update dependencies                # → No version bump
-
-BREAKING CHANGE: remove deprecated API    # → Major version bump (2.0.0)
+openai-document-analyzer report.pdf \
+  --prompt "List the decisions, owners, deadlines, and unresolved risks."
 ```
 
-### Automatic Release Process
+Use a balanced model and lower reasoning effort:
 
-1. **Push to main** → Triggers release workflow
-2. **Analyze commits** → Determines version bump type  
-3. **Generate changelog** → Based on commit messages
-4. **Create release** → Automatic GitHub release with notes
-5. **Update badges** → Coverage and release status
+```bash
+openai-document-analyzer notes.md \
+  --model gpt-5.6-terra \
+  --reasoning-effort low \
+  --verbosity low
+```
 
-### Release Outputs
+Read a longer prompt from a file:
 
-- 📋 **CHANGELOG.md** - Automatically generated and maintained
-- 🏷️ **Git tags** - Semantic version tags (v1.0.0, v1.1.0, etc.)
-- 📦 **GitHub Releases** - With auto-generated release notes
+```bash
+openai-document-analyzer contract.pdf --prompt-file review-prompt.txt
+```
+
+The module form is equivalent:
+
+```bash
+python -m openai_document_analyzer report.pdf
+```
+
+List the documented model profiles:
+
+```bash
+openai-document-analyzer --list-models
+```
+
+## Python API
+
+```python
+from openai_document_analyzer import DocumentAnalyzer
+
+analyzer = DocumentAnalyzer(
+    model="gpt-5.6-terra",
+    reasoning_effort="medium",
+    verbosity="medium",
+    store=False,
+)
+
+result = analyzer.analyze_document(
+    "report.pdf",
+    "Summarize the conclusions and cite the supporting sections.",
+)
+print(result)
+```
+
+The client can be injected for custom networking, testing, or observability:
+
+```python
+from openai import OpenAI
+from openai_document_analyzer import DocumentAnalyzer
+
+client = OpenAI(timeout=60.0, max_retries=3)
+analyzer = DocumentAnalyzer(client=client)
+```
+
+See the [API guide](docs/API.md) for the public interface and exceptions.
+
+## Model profiles
+
+| Model | Intended use |
+| --- | --- |
+| `gpt-5.6-sol` | Default; frontier capability for demanding analysis |
+| `gpt-5.6-terra` | Balanced intelligence, latency, and cost |
+| `gpt-5.6-luna` | Cost-efficient, higher-volume analysis |
+
+The model list is guidance, not an allowlist. `--model` also accepts compatible
+snapshots and future model IDs available to your OpenAI project. Evaluate output
+quality, latency, and cost on representative documents before changing a
+production default.
+
+## Safety limits and privacy defaults
+
+- Response storage is disabled unless `--store` is explicitly supplied.
+- Files larger than 20 MiB are rejected before parsing.
+- Extracted text longer than 200,000 characters is rejected before API use.
+- Output is limited to 4,000 tokens by default.
+- Document contents are labeled as untrusted data in the model instructions.
+- API failures are raised as typed application errors; they are not returned as
+  plausible analysis text.
+
+Limits can be changed through CLI flags or constructor arguments. Raising a
+limit can increase latency and cost.
+
+## Legacy interactive command
+
+The original version 1 command remains available during the v2 transition:
+
+```bash
+python scripts/text_analysis.py \
+  examples/example_prompt.txt \
+  examples/example_response.txt \
+  examples/example_text_to_analyze.txt
+```
+
+New integrations should use the package CLI or Python API. See the
+[v2 migration guide](docs/MIGRATION_V2.md).
+
+## Development
+
+```bash
+python -m pip install -e ".[dev]"
+ruff check .
+ruff format --check .
+pytest
+python -m build
+```
+
+The test suite never calls the OpenAI API. All network behavior is mocked.
+
+## Documentation
+
+- [Configuration reference](docs/CONFIGURATION.md)
+- [Python API](docs/API.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Version 2 migration](docs/MIGRATION_V2.md)
+- [Privacy and data handling](PRIVACY.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Support](SUPPORT.md)
+- [Changelog](CHANGELOG.md)
+
+## License and attribution
+
+Released under the [MIT License](LICENSE).
+
+OpenAI is a trademark of OpenAI, L.L.C. This independent project is not
+affiliated with or endorsed by OpenAI.
+
+Copyright © 2023–2026 Danilo Díaz Tarascó and contributors.

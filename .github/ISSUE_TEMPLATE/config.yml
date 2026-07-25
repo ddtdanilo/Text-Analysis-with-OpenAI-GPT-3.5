@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/ddtdanilo/OpenAI-Document-Analyzer/discussions
+    about: Ask usage questions and discuss ideas.
+  - name: Private security report
+    url: https://github.com/ddtdanilo/OpenAI-Document-Analyzer/security/advisories/new
+    about: Report vulnerabilities without public disclosure.
+  - name: OpenAI account support
+    url: https://help.openai.com/
+    about: Get help with billing, rate limits, model access, or an OpenAI account.

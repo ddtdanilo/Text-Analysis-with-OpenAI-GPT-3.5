@@ -1,0 +1,68 @@
+name: Bug report
+description: Report a reproducible defect using sanitized inputs.
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never include API keys, personal data, confidential documents, or raw
+        production responses. Use a minimal synthetic example.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Provide exact sanitized steps and command.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: synthetic
+    attributes:
+      label: Synthetic input
+      description: Provide the smallest non-sensitive document content that reproduces the issue.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: 2.0.0
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python and operating system
+      placeholder: Python 3.13.5 — Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model ID
+      placeholder: gpt-5.6-sol
+  - type: textarea
+    id: error
+    attributes:
+      label: Sanitized error output
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I removed all secrets and sensitive document content.
+          required: true
+        - label: I can reproduce this on a supported version.
+          required: true

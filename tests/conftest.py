@@ -1,29 +1,20 @@
-"""Pytest configuration file with common fixtures."""
-import os
-import warnings
+"""Shared pytest fixtures."""
+
+from types import SimpleNamespace
+from unittest.mock import Mock
+
 import pytest
-from pathlib import Path
 
-# Configure pytest-asyncio
-pytest_plugins = ("pytest_asyncio",)
-
-
-def pytest_configure(config):
-    """Configure pytest settings."""
-    # Set asyncio mode to auto
-    config.option.asyncio_mode = "auto"
-    # Suppress specific warnings
-    warnings.filterwarnings("ignore", category=pytest.PytestDeprecationWarning)
+from openai_document_analyzer import DocumentAnalyzer
 
 
 @pytest.fixture
-def test_data_dir() -> Path:
-    """Return the path to the test data directory."""
-    return Path(__file__).parent / "test_data"
+def mock_client() -> SimpleNamespace:
+    """Return a minimal mock of the OpenAI client."""
+    return SimpleNamespace(responses=SimpleNamespace(create=Mock()))
 
 
 @pytest.fixture
-def mock_env_vars(monkeypatch):
-    """Mock environment variables for testing."""
-    monkeypatch.setenv("OPENAI_API_KEY", "test-api-key")
-    monkeypatch.setenv("OPENAI_MODEL", "gpt-3.5-turbo") 
+def analyzer(mock_client: SimpleNamespace) -> DocumentAnalyzer:
+    """Return an analyzer that cannot make network requests."""
+    return DocumentAnalyzer(client=mock_client)
